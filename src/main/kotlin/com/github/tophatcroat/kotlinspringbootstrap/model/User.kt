@@ -13,20 +13,28 @@ import javax.validation.constraints.Size
 data class User(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         val id: Long? = null,
-        val name: String,
-        val password: String
+        var name: String = "",
+        var password: String = "",
+        var token: String = ""
 )
 
-data class UserLoginJson(
+data class UserLoginRequest(
         @SerializedName("username")
         @NotNull(message = "can't be missing")
         @Size(min = 1, message = "can't be empty")
         @Pattern(regexp = "^\\w+$", message = "must be alphanumeric")
-        val name: String,
+        val name: String?,
 
         @SerializedName("password")
         @NotNull(message = "can't be missing")
         @Size(min = 1, message = "can't be empty")
-        val password: String
+        val password: String?
+)
+
+data class UserLoginResponse(
+        @SerializedName("username")
+        val name: String?,
+        @SerializedName("token")
+        val token: String?
 )
 

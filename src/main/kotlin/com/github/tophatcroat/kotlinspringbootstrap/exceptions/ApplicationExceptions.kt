@@ -3,5 +3,5 @@ package com.github.tophatcroat.kotlinspringbootstrap.exceptions
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
-@ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE, reason = "User already exists")
-class UserExistsException : RuntimeException()
+@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "This should not happen. Congratulations!")
+class WtfException : RuntimeException()

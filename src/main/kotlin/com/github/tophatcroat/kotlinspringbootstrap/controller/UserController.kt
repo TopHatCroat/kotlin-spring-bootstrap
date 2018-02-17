@@ -1,35 +1,52 @@
 package com.github.tophatcroat.kotlinspringbootstrap.controller
 
+import com.github.tophatcroat.kotlinspringbootstrap.auth.RequireAuth
+import com.github.tophatcroat.kotlinspringbootstrap.exceptions.CredentialsException
 import com.github.tophatcroat.kotlinspringbootstrap.exceptions.UserExistsException
 import com.github.tophatcroat.kotlinspringbootstrap.helpers.check
-import com.github.tophatcroat.kotlinspringbootstrap.model.User
-import com.github.tophatcroat.kotlinspringbootstrap.model.UserLoginJson
+import com.github.tophatcroat.kotlinspringbootstrap.model.UserLoginRequest
+import com.github.tophatcroat.kotlinspringbootstrap.model.UserLoginResponse
 import com.github.tophatcroat.kotlinspringbootstrap.repository.UserRepository
 import com.github.tophatcroat.kotlinspringbootstrap.service.UserService
-import org.springframework.validation.Errors
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.validation.BindingResult
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
-@RestController class UserController(val repository: UserRepository,
-                                     val userService: UserService) {
+@RestController
+class UserController(val repository: UserRepository,
+                     val userService: UserService) {
 
-    @PostMapping("/user")
-    fun register(@Valid @RequestBody login: UserLoginJson, errors: Errors): Any {
+    @PostMapping("/register")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    fun register(@Valid @RequestBody body: UserLoginRequest, errors: BindingResult) {
         errors.check()
 
-        if(repository.existsByName(login.name))
+        if (repository.existsByName(body.name!!))
             throw UserExistsException()
 
-        return repository.save(User(null, login.name, login.password))
+        userService.register(body.name, body.password!!)
     }
 
-    @GetMapping("/user")
-    fun getAll(): List<UserLoginJson> {
-        return repository.findAll().map {
-            UserLoginJson(it.name, it.password)
+    @PostMapping("/login")
+    @ResponseStatus(value = HttpStatus.OK)
+    fun login(@Valid @RequestBody login: UserLoginRequest, errors: BindingResult): UserLoginResponse {
+        errors.check()
+
+        if (repository.existsByName(login.name!!).not())
+            throw CredentialsException()
+
+        return userService.login(login.name, login.password!!).let {
+            repository.saveAndFlush(it)
+            UserLoginResponse(it.name, it.token)
         }
     }
+
+    @RequireAuth
+    @GetMapping("/users")
+    fun getAll() = repository.findAll().map { UserLoginResponse(it.name, it.token) }
+
+    @RequireAuth
+    @GetMapping("/user/{id}")
+    fun get(@PathVariable id: Long) = repository.getOne(id).let { UserLoginResponse(it.name, it.token) }
 }

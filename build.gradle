@@ -53,9 +53,15 @@ dependencies {
     compile 'javax.xml.bind:jaxb-api'
     compile 'com.sun.xml.bind:jaxb-core:2.3.0'
     compile 'com.sun.xml.bind:jaxb-impl:2.3.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile "org.jetbrains.kotlin:kotlin-reflect"
+    compile 'org.jetbrains.kotlin:kotlin-reflect'
+
+    compile 'org.hibernate.validator:hibernate-validator'
+    compile 'org.hibernate.validator:hibernate-validator-cdi:6.0.7.Final'
     compile 'com.google.code.gson:gson'
+    compile 'io.jsonwebtoken:jjwt:0.9.0'
+    compile 'joda-time:joda-time:2.9.9'
+    compile 'org.mindrot:jbcrypt:0.4'
+
     runtime 'com.h2database:h2'
     runtime 'org.postgresql:postgresql'
 
