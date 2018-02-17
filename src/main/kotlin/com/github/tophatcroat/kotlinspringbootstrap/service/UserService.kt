@@ -1,6 +1,6 @@
 package com.github.tophatcroat.kotlinspringbootstrap.service
 
-import com.github.tophatcroat.kotlinspringbootstrap.exceptions.CredentialsException
+import com.github.tophatcroat.kotlinspringbootstrap.exception.CredentialsException
 import com.github.tophatcroat.kotlinspringbootstrap.model.User
 import com.github.tophatcroat.kotlinspringbootstrap.repository.UserRepository
 import io.jsonwebtoken.Jwts
@@ -28,8 +28,8 @@ class UserService(val repository: UserRepository,
     }
 
     @Throws(CredentialsException::class)
-    fun login(username: String, password: String): User {
-        val user = repository.findByName(username)
+    fun login(email: String, password: String): User {
+        val user = repository.findByEmail(email)
 
         if (BCrypt.checkpw(password, user?.password).not())
             throw CredentialsException()
@@ -41,7 +41,7 @@ class UserService(val repository: UserRepository,
 
     fun newToken(user: User) = Jwts.builder()
             .setIssuedAt(Date())
-            .setSubject(user.name)
+            .setSubject(user.email)
             .setIssuer(jwtIssuer)
             .setExpiration(Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
             .signWith(SignatureAlgorithm.HS512, jwtSecret).compact()!!

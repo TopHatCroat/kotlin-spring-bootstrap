@@ -1,4 +1,4 @@
-package com.github.tophatcroat.kotlinspringbootstrap.exceptions
+package com.github.tophatcroat.kotlinspringbootstrap.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus

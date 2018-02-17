@@ -1,6 +1,6 @@
 package com.github.tophatcroat.kotlinspringbootstrap.auth
 
-import com.github.tophatcroat.kotlinspringbootstrap.exceptions.AuthException
+import com.github.tophatcroat.kotlinspringbootstrap.exception.AuthException
 import com.github.tophatcroat.kotlinspringbootstrap.model.User
 import com.github.tophatcroat.kotlinspringbootstrap.service.UserService
 import org.aspectj.lang.ProceedingJoinPoint
