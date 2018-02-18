@@ -1,4 +1,4 @@
-package com.github.tophatcroat.kotlinspringbootstrap.model
+package com.github.tophatcroat.kotlinspringbootstrap.domain.model
 
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue

@@ -1,7 +1,7 @@
-package com.github.tophatcroat.kotlinspringbootstrap.auth
+package com.github.tophatcroat.kotlinspringbootstrap.web.auth
 
 import com.github.tophatcroat.kotlinspringbootstrap.exception.AuthException
-import com.github.tophatcroat.kotlinspringbootstrap.model.User
+import com.github.tophatcroat.kotlinspringbootstrap.domain.model.User
 import com.github.tophatcroat.kotlinspringbootstrap.service.UserService
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -24,7 +24,7 @@ annotation class RequireAuth(val mandatory: Boolean = true)
 @Component
 class RequireAuthAspect(@Autowired val userService: UserService) {
 
-    @Pointcut(value = "execution(@com.github.tophatcroat.kotlinspringbootstrap.auth.RequireAuth * *.*(..))")
+    @Pointcut(value = "execution(@com.github.tophatcroat.kotlinspringbootstrap.web.auth.RequireAuth * *.*(..))")
     fun authenticatedEndpoint() {
     }
 

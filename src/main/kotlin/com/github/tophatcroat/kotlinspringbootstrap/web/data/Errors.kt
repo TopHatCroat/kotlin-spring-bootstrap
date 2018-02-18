@@ -1,4 +1,4 @@
-package com.github.tophatcroat.kotlinspringbootstrap.controller.data
+package com.github.tophatcroat.kotlinspringbootstrap.web.data
 
 import java.util.*
 

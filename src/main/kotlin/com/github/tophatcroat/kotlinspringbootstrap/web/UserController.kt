@@ -1,21 +1,21 @@
-package com.github.tophatcroat.kotlinspringbootstrap.controller
+package com.github.tophatcroat.kotlinspringbootstrap.web
 
-import com.github.tophatcroat.kotlinspringbootstrap.auth.RequireAuth
-import com.github.tophatcroat.kotlinspringbootstrap.controller.data.InvalidDataResponse
-import com.github.tophatcroat.kotlinspringbootstrap.controller.data.UserLoginRequest
-import com.github.tophatcroat.kotlinspringbootstrap.controller.data.UserLoginResponse
+import com.github.tophatcroat.kotlinspringbootstrap.web.auth.RequireAuth
+import com.github.tophatcroat.kotlinspringbootstrap.web.data.InvalidDataResponse
+import com.github.tophatcroat.kotlinspringbootstrap.web.data.UserLoginRequest
+import com.github.tophatcroat.kotlinspringbootstrap.web.data.UserLoginResponse
 import com.github.tophatcroat.kotlinspringbootstrap.exception.CredentialsException
 import com.github.tophatcroat.kotlinspringbootstrap.exception.InvalidDataException
 import com.github.tophatcroat.kotlinspringbootstrap.exception.UserExistsException
 import com.github.tophatcroat.kotlinspringbootstrap.helpers.check
-import com.github.tophatcroat.kotlinspringbootstrap.repository.UserRepository
+import com.github.tophatcroat.kotlinspringbootstrap.domain.UserRepository
 import com.github.tophatcroat.kotlinspringbootstrap.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import javax.validation.Validation
+import javax.servlet.http.HttpServletResponse
 
 
 @RestController
@@ -56,7 +56,8 @@ class UserController(val repository: UserRepository,
     fun get(@PathVariable id: Long) = repository.getOne(id).let { UserLoginResponse(it.email, it.token) }
 
     @ExceptionHandler(InvalidDataException::class)
-    fun handleInvalidDataException(exception: InvalidDataException): InvalidDataResponse {
+    fun handleInvalidDataException(exception: InvalidDataException, httpServletResponse: HttpServletResponse): InvalidDataResponse {
+        httpServletResponse.status = HttpStatus.BAD_REQUEST.value()
         return InvalidDataResponse(
                 Date(),
                 HttpStatus.BAD_REQUEST.value(),

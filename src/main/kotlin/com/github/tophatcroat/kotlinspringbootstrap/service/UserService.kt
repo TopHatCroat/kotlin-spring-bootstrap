@@ -1,8 +1,8 @@
 package com.github.tophatcroat.kotlinspringbootstrap.service
 
 import com.github.tophatcroat.kotlinspringbootstrap.exception.CredentialsException
-import com.github.tophatcroat.kotlinspringbootstrap.model.User
-import com.github.tophatcroat.kotlinspringbootstrap.repository.UserRepository
+import com.github.tophatcroat.kotlinspringbootstrap.domain.model.User
+import com.github.tophatcroat.kotlinspringbootstrap.domain.UserRepository
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.mindrot.jbcrypt.BCrypt
