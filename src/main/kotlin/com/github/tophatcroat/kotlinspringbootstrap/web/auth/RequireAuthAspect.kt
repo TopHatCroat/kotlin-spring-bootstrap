@@ -43,6 +43,8 @@ class RequireAuthAspect(@Autowired val userService: UserService) {
             throw AuthException()
         }
 
+        token.replace("Bearer ", "")
+
         val user: User? = userService.findByToken(token as String) ?: throw AuthException()
 
         userService.setCurrentUser(user!!)
