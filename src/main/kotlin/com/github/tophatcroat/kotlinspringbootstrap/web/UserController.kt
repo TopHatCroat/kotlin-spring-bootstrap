@@ -10,6 +10,7 @@ import com.github.tophatcroat.kotlinspringbootstrap.exception.UserExistsExceptio
 import com.github.tophatcroat.kotlinspringbootstrap.helpers.check
 import com.github.tophatcroat.kotlinspringbootstrap.domain.UserRepository
 import com.github.tophatcroat.kotlinspringbootstrap.service.UserService
+import com.github.tophatcroat.kotlinspringbootstrap.web.data.UserResponse
 import org.springframework.http.HttpStatus
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
@@ -24,13 +25,15 @@ class UserController(val repository: UserRepository,
 
     @PostMapping("/register")
     @ResponseStatus(value = HttpStatus.CREATED)
-    fun register(@Validated @RequestBody body: UserLoginRequest, errors: BindingResult) {
+    fun register(@Validated @RequestBody body: UserLoginRequest, errors: BindingResult): UserLoginResponse {
         errors.check()
 
         if (repository.existsByEmail(body.email!!))
             throw UserExistsException()
 
-        userService.register(body.email, body.password!!)
+        return userService.register(body.email, body.password!!).let {
+            UserLoginResponse(it.id!!, it.email, it.token)
+        }
     }
 
     @PostMapping("/login")
@@ -42,27 +45,15 @@ class UserController(val repository: UserRepository,
             throw CredentialsException()
 
         return userService.login(login.email, login.password!!).let {
-            repository.saveAndFlush(it)
-            UserLoginResponse(it.email, it.token)
+            UserLoginResponse(it.id!!, it.email, it.token)
         }
     }
 
     @RequireAuth
     @GetMapping("/users")
-    fun getAll() = repository.findAll().map { UserLoginResponse(it.email, it.token) }
+    fun getAll() = repository.findAll().map { UserResponse(it.id!!, it.email) }
 
     @RequireAuth
     @GetMapping("/user/{id}")
-    fun get(@PathVariable id: Long) = repository.getOne(id).let { UserLoginResponse(it.email, it.token) }
-
-    @ExceptionHandler(InvalidDataException::class)
-    fun handleInvalidDataException(exception: InvalidDataException, httpServletResponse: HttpServletResponse): InvalidDataResponse {
-        httpServletResponse.status = HttpStatus.BAD_REQUEST.value()
-        return InvalidDataResponse(
-                Date(),
-                HttpStatus.BAD_REQUEST.value(),
-                "Invalid request data",
-                exception.errors.fieldErrors.map { it.field to (it.defaultMessage ?: "") }.toMap()
-        )
-    }
+    fun get(@PathVariable id: Long) = repository.getOne(id).let { UserResponse(it.id!!, it.email) }
 }

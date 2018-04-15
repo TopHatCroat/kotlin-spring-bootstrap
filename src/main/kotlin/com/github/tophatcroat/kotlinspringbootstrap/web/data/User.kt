@@ -8,7 +8,7 @@ import javax.validation.constraints.Size
 data class UserLoginRequest(
         @field:NotEmpty(message = "can't be missing")
         @field:Size(min = 1, message = "can't be empty")
-        @field:Pattern(regexp = "^\\w+$", message = "must be alphanumeric")
+        @field:Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+\$", message = "not valid email")
         val email: String?,
 
         @field:NotEmpty(message = "can't be missing")
@@ -17,9 +17,17 @@ data class UserLoginRequest(
 )
 
 data class UserLoginResponse(
+        val id: Long,
         @field:SerializedName("email")
-        val email: String?,
+        val email: String,
         @field:SerializedName("token")
-        val token: String?
+        val token: String
+)
+
+
+data class UserResponse(
+        val id: Long,
+        @field:SerializedName("email")
+        val email: String
 )
 

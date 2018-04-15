@@ -36,7 +36,7 @@ class UserService(val repository: UserRepository,
 
         user?.token = newToken(user!!)
 
-        return user
+        return repository.saveAndFlush(user)
     }
 
     fun newToken(user: User) = Jwts.builder()
@@ -46,8 +46,8 @@ class UserService(val repository: UserRepository,
             .setExpiration(Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
             .signWith(SignatureAlgorithm.HS512, jwtSecret).compact()!!
 
-    fun register(name: String, password: String) {
+    fun register(name: String, password: String): User {
         val hash = BCrypt.hashpw(password, BCrypt.gensalt())
-        repository.saveAndFlush(User(null, name, hash))
+        return repository.saveAndFlush(User(null, name, hash))
     }
 }
