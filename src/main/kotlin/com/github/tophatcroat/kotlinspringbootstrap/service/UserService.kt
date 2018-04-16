@@ -1,13 +1,14 @@
 package com.github.tophatcroat.kotlinspringbootstrap.service
 
-import com.github.tophatcroat.kotlinspringbootstrap.exception.CredentialsException
-import com.github.tophatcroat.kotlinspringbootstrap.domain.model.User
 import com.github.tophatcroat.kotlinspringbootstrap.domain.UserRepository
+import com.github.tophatcroat.kotlinspringbootstrap.domain.model.User
+import com.github.tophatcroat.kotlinspringbootstrap.exception.CredentialsException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.*
 import javax.transaction.Transactional
 
@@ -46,8 +47,11 @@ class UserService(val repository: UserRepository,
             .setExpiration(Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
             .signWith(SignatureAlgorithm.HS512, jwtSecret).compact()!!
 
-    fun register(name: String, password: String): User {
+    fun register(email: String, password: String): User {
         val hash = BCrypt.hashpw(password, BCrypt.gensalt())
-        return repository.saveAndFlush(User(null, name, hash))
+
+        return repository.saveAndFlush(User(null, email, hash, createdAt = Instant.now()))
     }
+
+    fun registerWithOauth(email: String, token: String): User = repository.saveAndFlush(User(null, email, "", token, Instant.now()))
 }

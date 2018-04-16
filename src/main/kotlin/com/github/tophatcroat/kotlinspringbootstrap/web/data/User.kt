@@ -2,6 +2,7 @@ package com.github.tophatcroat.kotlinspringbootstrap.web.data
 
 import com.google.gson.annotations.SerializedName
 import io.swagger.annotations.ApiModel
+import java.time.Instant
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
@@ -30,6 +31,7 @@ data class UserLoginResponse(
 data class UserResponse(
         val id: Long,
         @field:SerializedName("email")
-        val email: String
+        val email: String,
+        val createdAt: Instant
 )
 

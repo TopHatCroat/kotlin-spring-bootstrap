@@ -64,6 +64,7 @@ docker {
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-devtools'
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -72,6 +73,7 @@ dependencies {
     compile 'com.sun.xml.bind:jaxb-core:2.3.0'
     compile 'com.sun.xml.bind:jaxb-impl:2.3.0'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
+    compile 'com.google.api-client:google-api-client:1.23.0'
 
     compile 'org.hibernate.validator:hibernate-validator'
     compile 'org.hibernate.validator:hibernate-validator-cdi:6.0.7.Final'
@@ -80,7 +82,6 @@ dependencies {
     compile 'org.mindrot:jbcrypt:0.4'
     compile 'io.springfox:springfox-swagger2:2.8.0'
     compile 'io.springfox:springfox-swagger-ui:2.8.0'
-//    compile 'org.springframework.security.oauth:spring-security-oauth:2.3.0.BUILD-SNAPSHOT'
 
     runtime 'com.h2database:h2'
     runtime 'org.postgresql:postgresql'
