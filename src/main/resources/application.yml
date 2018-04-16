@@ -1,0 +1,44 @@
+## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+spring:
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST}:5432/postgres
+    username: postgres
+    password: postgres
+
+
+## Hibernate Properties
+
+# The SQL dialect makes Hibernate generate better SQL for the chosen database
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        # Disable feature detection
+        temp.use_jdbc_metadata_defaults: false
+        # Hibernate ddl auto (create, create-drop, validate, update)
+        ddl-auto: update
+    # Because detection is disabled you have to set correct dialect by hand.
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    show-sql: true
+    generate-ddl: true
+
+
+jwt:
+  secret: 9pUtbu9VXd2HrKZuVrkVMCItbjGEFIFvO6fPW/aUvw8=
+  issuer: PeroInc
+
+security:
+  oauth2:
+    client:
+      clientId: ${GOOGLE_CLIENT_ID}
+      clientSecret: ${GOOGLE_CLIENT_SECRET}
+      accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+      userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+      clientAuthenticationScheme: form
+      scope:
+        - openid
+        - email
+        - profile
+    resource:
+      userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
+      preferTokenInfo: true

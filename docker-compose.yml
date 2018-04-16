@@ -1,0 +1,31 @@
+version: '3.1'
+
+networks:
+  appnet:
+
+services:
+  db.dyec:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - appnet
+
+  app.dyec:
+    image: openjdk:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - ./:/app
+    working_dir: /app
+    environment:
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - DATABASE_HOST=db.dyec
+    command: ./gradlew bootRun
+    depends_on:
+      - db.dyec
+    networks:
+      - appnet

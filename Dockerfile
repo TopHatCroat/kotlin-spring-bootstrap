@@ -1,4 +1,4 @@
-FROM openjdk:9.0.1-11
+FROM openjdk:latest
 VOLUME /tmp
 VOLUME /app
 ARG JAR_FILE
