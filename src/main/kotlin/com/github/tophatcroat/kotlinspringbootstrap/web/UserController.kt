@@ -36,13 +36,6 @@ class UserController(val repository: UserRepository,
                      @Value("\${security.oauth2.client.clientId}") val clientId: String,
                      @Value("\${security.oauth2.client.clientSecret}") val clientSecret: String) {
 
-    @GetMapping(consumes = ["*", MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE], produces = [MediaType.TEXT_HTML_VALUE])
-    @ResponseStatus(value = HttpStatus.FOUND)
-    fun home() = ResponseEntity("", HttpHeaders().apply {
-        location = URI("/swagger-ui.html")
-    }, HttpStatus.FOUND)
-
-
     @PostMapping("/register")
     @ResponseStatus(value = HttpStatus.CREATED)
     fun register(@Validated @RequestBody body: UserLoginRequest, errors: BindingResult): UserLoginResponse {

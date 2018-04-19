@@ -11,6 +11,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.support.beans
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters
 import org.springframework.http.converter.json.GsonHttpMessageConverter
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import springfox.documentation.builders.ApiInfoBuilder
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
@@ -38,7 +40,17 @@ import java.util.*
 @EntityScan(
         basePackageClasses = [Jsr310JpaConverters::class],
         basePackages = ["com.github.tophatcroat.kotlinspringbootstrap.domain"])
-class Application
+class Application : WebMvcConfigurer {
+
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("*")
+                .allowedHeaders("*")
+                .allowCredentials(false)
+        super.addCorsMappings(registry)
+    }
+}
 
 fun main(args: Array<String>) {
     SpringApplicationBuilder()
@@ -74,9 +86,9 @@ fun main(args: Array<String>) {
                 }
 
                 bean {
-                    DateTimeFormatter.ofLocalizedDateTime( FormatStyle.FULL )
-                            .withLocale( Locale.ROOT )
-                            .withZone( ZoneId.systemDefault() )
+                    DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)
+                            .withLocale(Locale.ROOT)
+                            .withZone(ZoneId.systemDefault())
                 }
 
                 bean {

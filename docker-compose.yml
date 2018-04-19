@@ -19,11 +19,13 @@ services:
       - 8080:8080
     volumes:
       - ./:/app
+      - /opt/gradle:/root/.gradle
     working_dir: /app
     environment:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - DATABASE_HOST=db.dyec
+#    command: bash -c "./gradlew build --continuous & sleep 90 ; ./gradlew bootRun"
     command: ./gradlew bootRun
     depends_on:
       - db.dyec
