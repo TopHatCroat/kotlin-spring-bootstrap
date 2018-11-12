@@ -1,5 +1,7 @@
 package com.github.tophatcroat.kotlinspringbootstrap
 
+import com.github.tophatcroat.kotlinspringbootstrap.web.ErrorResponseFilter
+import com.github.tophatcroat.kotlinspringbootstrap.web.auth.JwtTokenAuthFilter
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import com.google.gson.JsonSerializer
@@ -8,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.support.beans
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters
 import org.springframework.http.converter.json.GsonHttpMessageConverter
@@ -34,9 +37,10 @@ import java.time.format.FormatStyle
 import java.util.*
 
 
-@SpringBootApplication
+@SpringBootApplication(
+        exclude = [(JacksonAutoConfiguration::class)]
+)
 @EnableSwagger2
-@EnableAutoConfiguration(exclude = [(JacksonAutoConfiguration::class)])
 @EntityScan(
         basePackageClasses = [Jsr310JpaConverters::class],
         basePackages = ["com.github.tophatcroat.kotlinspringbootstrap.domain"])
@@ -56,11 +60,19 @@ fun main(args: Array<String>) {
     SpringApplicationBuilder()
             .sources(Application::class.java)
             .initializers(beans {
-
                 bean {
                     SecurityConfiguration(null, null, null, null, "Bearer ", ApiKeyVehicle.HEADER,
                             "Authorization", ",")
                 }
+
+                bean(name = "errorResponseFilter") {
+                    FilterRegistrationBean<ErrorResponseFilter>().apply {
+                        filter = ErrorResponseFilter()
+                        urlPatterns.add("*")
+                        order = Int.MIN_VALUE
+                    }
+                }
+
                 bean {
                     Docket(DocumentationType.SWAGGER_2)
                             .securityContexts(listOf(SecurityContext.builder()
@@ -73,10 +85,10 @@ fun main(args: Array<String>) {
                                     .build()))
                             .securitySchemes(listOf(ApiKey("Authorization", "Authorization", "header")))
                             .apiInfo(ApiInfoBuilder()
-                                    .title("Do You Even Code")
+                                    .title("Kotlin Spring Boot bootstrap")
                                     .description("Spring Boot bootstrap project")
                                     .version("0.1")
-                                    .contact(Contact("Antonio Martinović", "www.example.com", "antmartin2@foi.hr"))
+                                    .contact(Contact("Antonio Martinović", "www.example.com", "sike@pm.me"))
                                     .license("Unlicense")
                                     .build())
                             .select()

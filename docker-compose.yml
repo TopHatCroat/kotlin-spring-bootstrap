@@ -29,5 +29,6 @@ services:
     command: ./gradlew bootRun
     depends_on:
       - db.dyec
+    network_mode: "host"
     networks:
       - appnet

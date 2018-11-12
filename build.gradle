@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.2.20'
+        kotlinVersion = '1.2.61'
         springBootVersion = '2.0.0.BUILD-SNAPSHOT'
         dockerVersion = '0.19.2'
     }
@@ -41,6 +41,7 @@ compileKotlin {
         jvmTarget = "1.8"
     }
 }
+
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
@@ -67,7 +68,10 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-devtools'
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-starter-web'
+
+    compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     compile 'com.fasterxml.jackson.module:jackson-module-kotlin'
     compile 'javax.xml.bind:jaxb-api'
     compile 'com.sun.xml.bind:jaxb-core:2.3.0'

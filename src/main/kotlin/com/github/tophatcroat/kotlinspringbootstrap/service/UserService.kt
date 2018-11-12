@@ -3,55 +3,36 @@ package com.github.tophatcroat.kotlinspringbootstrap.service
 import com.github.tophatcroat.kotlinspringbootstrap.domain.UserRepository
 import com.github.tophatcroat.kotlinspringbootstrap.domain.model.User
 import com.github.tophatcroat.kotlinspringbootstrap.exception.CredentialsException
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import org.mindrot.jbcrypt.BCrypt
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.util.*
 import javax.transaction.Transactional
 
 @Service
 @Transactional
-class UserService(val repository: UserRepository,
-                  @Value("\${jwt.secret}") val jwtSecret: String,
-                  @Value("\${jwt.issuer}") val jwtIssuer: String) {
+class UserService(val repository: UserRepository) : UserDetailsService {
 
-    private val user = ThreadLocal<User>()
+    override fun loadUserByUsername(username: String): UserDetails? =
+            repository.findByEmail(username) ?: throw CredentialsException()
 
-    fun findByToken(token: String) = repository.findByToken(token)
+    fun register(username: String, password: String): User {
+        val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
 
-    fun getCurrentUser() = user.get()
-
-    fun setCurrentUser(user: User?) {
-        this.user.set(user)
+        return repository.saveAndFlush(
+                User().apply {
+                    email = username
+                    passwd = hashedPassword
+                    role = "USER"
+                    createdAt = Instant.now()
+                })
     }
 
-    @Throws(CredentialsException::class)
-    fun login(email: String, password: String): User {
-        val user = repository.findByEmail(email)
-
-        if (BCrypt.checkpw(password, user?.password).not())
-            throw CredentialsException()
-
-        user?.token = newToken(user!!)
-
-        return repository.saveAndFlush(user)
-    }
-
-    fun newToken(user: User) = Jwts.builder()
-            .setIssuedAt(Date())
-            .setSubject(user.email)
-            .setIssuer(jwtIssuer)
-            .setExpiration(Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
-            .signWith(SignatureAlgorithm.HS512, jwtSecret).compact()!!
-
-    fun register(email: String, password: String): User {
-        val hash = BCrypt.hashpw(password, BCrypt.gensalt())
-
-        return repository.saveAndFlush(User(null, email, hash, createdAt = Instant.now()))
-    }
-
-    fun registerWithOauth(email: String, token: String): User = repository.saveAndFlush(User(null, email, "", token, Instant.now()))
+    fun registerWithOauth(username: String, token: String): User =
+            repository.saveAndFlush(User().apply {
+                email = username
+                role = "USER"
+                createdAt = Instant.now()
+            })
 }
