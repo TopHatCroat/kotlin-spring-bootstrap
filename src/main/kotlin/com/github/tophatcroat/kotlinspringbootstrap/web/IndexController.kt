@@ -5,8 +5,8 @@ import com.github.tophatcroat.kotlinspringbootstrap.exception.UserExistsExceptio
 import com.github.tophatcroat.kotlinspringbootstrap.helpers.check
 import com.github.tophatcroat.kotlinspringbootstrap.service.ProfileService
 import com.github.tophatcroat.kotlinspringbootstrap.service.UserService
-import com.github.tophatcroat.kotlinspringbootstrap.web.data.UserLoginRequest
 import com.github.tophatcroat.kotlinspringbootstrap.web.data.UserLoginResponse
+import com.github.tophatcroat.kotlinspringbootstrap.web.data.UserRegisterRequest
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.apache.ApacheHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -30,7 +30,9 @@ class IndexController(
         @Value("\${security.oauth2.client.clientId}") val clientId: String,
         @Value("\${security.oauth2.client.clientSecret}") val clientSecret: String) {
 
-    @GetMapping(value = ["/"], consumes = ["*", MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE], produces = [MediaType.TEXT_HTML_VALUE])
+    @GetMapping("/",
+            consumes = ["*", MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE],
+            produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseStatus(value = HttpStatus.FOUND)
     fun home() = ResponseEntity("", HttpHeaders().apply {
         location = URI("/swagger-ui.html")
@@ -43,15 +45,17 @@ class IndexController(
 
     @PostMapping("/register")
     @ResponseStatus(value = HttpStatus.CREATED)
-    fun register(@Validated @RequestBody body: UserLoginRequest, errors: BindingResult): UserLoginResponse {
+    fun register(@Validated @RequestBody body: UserRegisterRequest, errors: BindingResult): UserLoginResponse {
         errors.check()
 
         if (repository.existsByEmail(body.email!!))
             throw UserExistsException()
 
-        return userService.register(body.email, body.password!!).let {
-            UserLoginResponse(it.id!!, it.email)
-        }
+        val user = userService.register(body.email, body.password!!)
+
+        profileService.createProfileForUser(user, body.profile.nick, body.profile.image)
+
+        return UserLoginResponse(user.id!!, user.email)
     }
 
     @GetMapping("/gauth")
@@ -78,11 +82,10 @@ class IndexController(
             if (repository.existsByEmail(email))
                 throw UserExistsException()
 
-            val userResponse = userService.registerWithOauth(email, idToken.toString()).let {
-                UserLoginResponse(it.id!!, it.email)
-            }
+            val user = userService.registerWithOauth(email, idToken.toString())
+            val userResponse = UserLoginResponse(user.id!!, user.email)
 
-            profileService.createProfileForUser(userResponse.id, name, pictureUrl)
+            profileService.createProfileForUser(user, name, pictureUrl)
 
             return userResponse
 

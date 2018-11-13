@@ -7,9 +7,9 @@ import javax.persistence.*
 data class Profile(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         val id: Long? = null,
-        val username: String = "",
-        val image: String = "",
+        var nick: String = "",
+        var image: String = "",
         @ManyToOne(targetEntity = User::class)
-        val userId: Long,
-        val createdAt: Instant
+        var user: User? = null,
+        var createdAt: Instant = Instant.now()
 )
