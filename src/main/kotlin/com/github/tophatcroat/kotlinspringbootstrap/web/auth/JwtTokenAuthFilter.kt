@@ -5,7 +5,6 @@ import com.github.tophatcroat.kotlinspringbootstrap.service.UserService
 import io.jsonwebtoken.Jwts
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
@@ -41,15 +40,11 @@ class JwtTokenAuthFilter(val userService: UserService,
             if (username != null) {
                 val authorities = claims.body.get("authorities") as List<String>
 
-                val auth = UsernamePasswordAuthenticationToken(
+                SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
                         username,
                         null,
                         authorities.map { authority -> SimpleGrantedAuthority(authority) }
-                )
-
-                // 6. Authenticate the user
-                // Now, user is authenticated
-                SecurityContextHolder.getContext().authentication = auth
+                ).apply { details = userService.loadUserByUsername(username) }
             }
 
         } catch (e: Exception) {

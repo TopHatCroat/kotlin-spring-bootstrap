@@ -29,30 +29,20 @@ class JwtAuthFilter(
 
     @Throws(AuthenticationException::class)
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
-
         try {
-
-            // 1. Get credentials from request
             val creds = ObjectMapper().readValue(request.inputStream, UserLoginRequest::class.java)
-
-            // 2. Create auth object (contains credentials) which will be used by auth manager
             val authToken = UsernamePasswordAuthenticationToken(creds.email, creds.password, Collections.emptyList())
 
-            // 3. Authentication manager authenticate the user, and use UserDetialsServiceImpl::loadUserByUsername() method to load the user.
             return authManager.authenticate(authToken)
-
         } catch (e: Exception) {
             throw CredentialsException()
         }
 
     }
 
-    // Upon successful authentication, generate a token.
-    // The 'auth' passed to successfulAuthentication() is the current authenticated user.
     @Throws(IOException::class, ServletException::class)
-    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain,
-                                          auth: Authentication) {
-
+    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse,
+                                          chain: FilterChain, auth: Authentication) {
         val now = System.currentTimeMillis()
         val token = Jwts.builder()
                 .setSubject(auth.name)
@@ -62,7 +52,6 @@ class JwtAuthFilter(
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact()
 
-        // Add token to header
         response.addHeader("Authorization", "Bearer $token")
     }
 

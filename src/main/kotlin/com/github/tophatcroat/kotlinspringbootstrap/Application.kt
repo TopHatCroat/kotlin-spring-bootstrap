@@ -1,11 +1,9 @@
 package com.github.tophatcroat.kotlinspringbootstrap
 
 import com.github.tophatcroat.kotlinspringbootstrap.web.ErrorResponseFilter
-import com.github.tophatcroat.kotlinspringbootstrap.web.auth.JwtTokenAuthFilter
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import com.google.gson.JsonSerializer
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
