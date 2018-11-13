@@ -42,7 +42,7 @@ data class UserLoginResponse(
 
 
 data class UserResponse(
-        val id: Long,
+        val id: Long? = null,
         @field:SerializedName("email")
         val email: String,
         val profile: ProfileResponse? = null
