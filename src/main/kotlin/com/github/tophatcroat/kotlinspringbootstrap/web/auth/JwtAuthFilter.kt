@@ -24,7 +24,7 @@ class JwtAuthFilter(
         @Value("\${security.signing-key}") val jwtSecret: String) : UsernamePasswordAuthenticationFilter() {
 
     init {
-        this.setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/login", "POST"))
+        setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/login", "POST"))
     }
 
     @Throws(AuthenticationException::class)
@@ -54,5 +54,4 @@ class JwtAuthFilter(
 
         response.addHeader("Authorization", "Bearer $token")
     }
-
 }
