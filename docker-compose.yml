@@ -4,7 +4,7 @@ networks:
   appnet:
 
 services:
-  db.dyec:
+  db.example:
     image: postgres
     ports:
       - 5432:5432
@@ -13,7 +13,7 @@ services:
     networks:
       - appnet
 
-  app.dyec:
+  app.example:
     image: openjdk:latest
     ports:
       - 8080:8080
@@ -24,11 +24,11 @@ services:
     environment:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - DATABASE_HOST=db.dyec
+      - DATABASE_HOST=db.example
 #    command: bash -c "./gradlew build --continuous & sleep 90 ; ./gradlew bootRun"
     command: ./gradlew bootRun
     depends_on:
-      - db.dyec
+      - db.example
     network_mode: "host"
     networks:
       - appnet
